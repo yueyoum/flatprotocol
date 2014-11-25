@@ -4,13 +4,16 @@ __author__ = 'Wang Chao'
 __date__ = '14-11-25'
 
 import os
+import sys
 import shutil
 from optparse import OptionParser
+import inspect
 
 from flatprotocol import Protocol
 from flatprotocol import templates
 
-def generate():
+
+def build_options():
     parse = OptionParser()
     parse.add_option(
         "-l", "--language",
@@ -23,6 +26,11 @@ def generate():
         help="Destination directory to place the generated files"
     )
 
+    return parse
+
+def check_and_prepare():
+    parse = build_options()
+
     options, args = parse.parse_args()
     language = options.language
     destination = options.destination
@@ -31,7 +39,10 @@ def generate():
         parse.error("Language not given")
 
     if not destination:
+        destination_given = False
         destination = "flatprotocol_out_{0}".format(language)
+    else:
+        destination_given = True
 
     try:
         t = getattr(templates, language)
@@ -40,18 +51,43 @@ def generate():
         return
 
     destination = os.path.abspath(destination)
-    shutil.rmtree(destination)
-    os.pardir.makedirs(destination)
+    if os.path.exists(destination):
+        if destination_given and os.listdir(destination):
+            parse.error("Given directory Not Empty!")
+        shutil.rmtree(destination)
+    os.mkdir(destination)
 
     for f in args:
-        file_name, file_extension_name = os.path.splitext(f)
-        generate_one(t, file_name, destination)
+        file_absdir = os.path.dirname(os.path.abspath(f))
+        if file_absdir not in sys.path:
+            sys.path.append(file_absdir)
+
+    return t, args, destination
+
+
+
+
+def generate():
+    template_obj, args, destination = check_and_prepare()
+
+    for f in args:
+        file_name, _ = os.path.splitext(os.path.basename(f))
+        generate_one(template_obj, file_name, destination)
 
 
 def generate_one(t, file_name, destination):
-    print t, file_name, destination
     module = __import__(file_name)
-    for cls in dir(module):
-        if isinstance(cls, Protocol):
-            print t.generate(cls)
+
+    result_file_name = os.path.join(destination, file_name, t.FILE_NAME_EXTENSION)
+    result_file = open(result_file_name, 'a')
+
+    for name in dir(module):
+        if name.startswith('__'):
+            continue
+        cls = getattr(module, name)
+        if inspect.isclass(cls) and issubclass(cls, Protocol) and cls is not Protocol:
+            result = t.generate(cls)
+            result_file.write(result)
+
+    result_file.close()
 
