@@ -71,14 +71,17 @@ def generate():
     template_obj, args, destination = check_and_prepare()
 
     for f in args:
-        file_name, _ = os.path.splitext(os.path.basename(f))
+        file_name, ext = os.path.splitext(os.path.basename(f))
+        if ext != '.py':
+            print "Warning: {0} is Not a Python File, Ignore!".format(f)
+            continue
         generate_one(template_obj, file_name, destination)
 
 
 def generate_one(t, file_name, destination):
     module = __import__(file_name)
 
-    result_file_name = os.path.join(destination, file_name, t.FILE_NAME_EXTENSION)
+    result_file_name = os.path.join(destination, '{0}{1}'.format(file_name, t.FILE_NAME_EXTENSION))
     result_file = open(result_file_name, 'a')
 
     for name in dir(module):
