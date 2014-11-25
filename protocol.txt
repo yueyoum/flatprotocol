@@ -1,0 +1,111 @@
+Data Types
+==========
+
+    Basic Type:
+        1.  Integer. (Automatic conver interger to Int16/Int32/Int64 type)
+        2.  Float.
+        3.  Binary.  (A seqence of UTF8 encoded bytes)
+        4.  String.  (Same as Binary, But can automatic conver bytes to
+                      UTF8 encoded string)
+
+    Combined Type:
+        This is the actual data type of this protocol.
+
+        1.  Combined. (This type combine the basic type, list type into
+                       one data type.)
+
+
+    List Type:
+        1.  List<Basic Type>.
+        2.  List<Combined Type>.
+
+
+
+The Struct of the protocol's binary
+===================================
+
+
+     4 Bytes         4 Bytes                               
+        +               +                                  
+        |               |                                  
++-------+-------+-------+-------+-------------------------+
+|               |               |                         |
+|  Body Length  |  Protocol Id  |        * Data *         |
+|               |               |                         |
++---------------+---------------+------------+------------+
+                                             |             
+                                             |             
+                                             v             
+         
+                                               
+Fields are the fields defined in the the Combined Data.
+
+
+      1 Byte                                                         
+         +                                                           
+         |                                                           
++--------+-------+------------------+-----------+-----------+        
+|                |                  |           |           |        
+|  Field Type Id |  * Field Data *  |  Field 2  |  Field 3  |  ......
+|                |                  |           |           |        
++----------------+--------+---------+-----------+-----------+        
+                          |                                          
++             Field 1     |         +                                
++-----------------------------------+                                
+                          |                                          
+                          |                                          
+                          v                                          
+
+
+Different Field Data type has different struct of Field Data
+
+1. Integer Type
+    
+    The Data length is fixed and we known it (due to the data type),
+    So, the Data is the value exactly.
+    
+2. Float Type
+
+    Same to the Integer Type
+
+3. Binary Type
+
+    We don't know the binary length, so, the data struct is the
+    length + value
+
+         4 Bytes                                                                       
+            +                                      
+            |                                      
+    +-------+-------+-----------------------------+
+    |               |                             |
+    | Binary Length | Binary value in UTF8 encode |
+    |               |                             |
+    +---------------+-----------------------------+
+
+
+    
+4. String Type
+
+    String is actually as same as Binary Type.
+    
+
+
+5. List Type
+
+
+    +-------------------+-------------------+-------------+-------------+
+    |                   |                   |             |             |
+    |  Element Type Id  |  Elements Amount  |  Element 1  |  Element 2  |  ...
+    |                   |                   |             |             |
+    +-------------------+-------------------+-------------+-------------+
+
+    Element is the same struct of this type's struct.
+
+    Example:
+        When Element Type is Integer Type, the Element is [Value]
+        When Element Type is Binary Type,  the Element is [length + value]
+        When Element Type is Combined Type,the Element is [combined]
+        which
+
+
+
