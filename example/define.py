@@ -8,7 +8,7 @@ from flatprotocol import *
 
 class Person(Protocol):
     id = IntegerField()
-    name = BinaryField(default="Jim", optional=True)
+    name = StringField(optional=True)
 
     class Meta:
         protocol_id = 1

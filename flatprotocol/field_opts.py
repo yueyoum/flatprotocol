@@ -3,40 +3,24 @@
 __author__ = 'Wang Chao'
 __date__ = '14-11-25'
 
-SUPPORTED_OPTIONS = ['optional', 'default',]
 
-from flatprotocol.exception import UnsupportedKWargs
+from flatprotocol.exception import UnsupportedFieldOptions
 
-__all__ = ['FieldOptions', 'IntegerFieldOptions', 'FloatFieldOptions',
-           'BinaryFieldOptions', 'ListFieldOptions']
+__all__ = ['BaseFieldOptions',]
 
-class FieldOptions(object):
+
+
+class BaseFieldOptions(object):
+    SUPPORTED_OPTIONS = ['optional',]
     optional = False
 
     @classmethod
-    def make_opts(cls, **kwargs):
+    def make_opts(cls, field, **kwargs):
         for k in kwargs:
-            if k not in SUPPORTED_OPTIONS:
-                raise UnsupportedKWargs(k)
+            if k not in cls.SUPPORTED_OPTIONS:
+                raise UnsupportedFieldOptions(k)
 
-        opts = {}
-        for k in SUPPORTED_OPTIONS:
+        for k in cls.SUPPORTED_OPTIONS:
             v = kwargs.get(k, None) or getattr(cls, k)
-            opts[k] = v
-
-        return opts
-
-
-class IntegerFieldOptions(FieldOptions):
-    default = 0
-
-class FloatFieldOptions(FieldOptions):
-    default = 0
-
-class BinaryFieldOptions(FieldOptions):
-    default = ""
-
-class ListFieldOptions(FieldOptions):
-    default = []
-
+            setattr(field, k, v)
 

@@ -5,7 +5,7 @@ __date__ = '14-11-25'
 
 import datetime
 
-from flatprotocol.fields import BaseField
+from flatprotocol import *
 
 
 TEMPLATE = """
@@ -29,6 +29,22 @@ class {class_name}(object):
 FILE_NAME_EXTENSION = ".py"
 
 
+def get_default_value(field):
+    if isinstance(field, IntegerField):
+        return 0
+    if isinstance(field, FloatField):
+        return 0
+    if isinstance(field, BinaryField):
+        return '""'
+    if isinstance(field, StringField):
+        return '""'
+    if isinstance(field, Vector2Field):
+        return (0, 0)
+    if isinstance(field, Vector3Field):
+        return (0,0,0)
+    if isinstance(field, ListField):
+        return []
+
 def generate(cls):
     """
 
@@ -42,11 +58,7 @@ def generate(cls):
     for p in dir(cls):
         field = getattr(cls, p)
         if isinstance(field, BaseField):
-            if field.options['optional']:
-                value = field.options['default']
-            else:
-                value = None
-            fields.append("        self.{0} = {1}".format(p, value))
+            fields.append("        self.{0} = {1}".format(p, get_default_value(field)))
 
     fields = '\n'.join(fields)
 
@@ -58,4 +70,3 @@ def generate(cls):
     )
 
     return result
-

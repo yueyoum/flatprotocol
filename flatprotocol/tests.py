@@ -9,31 +9,24 @@ class TestFieldOptions(unittest.TestCase):
 
     def test_unsupported_options(self):
         self.assertRaises(
-            exception.UnsupportedKWargs,
-            field_opts.FieldOptions.make_opts,
+            flatprotocol.exception.UnsupportedFieldOptions,
+            flatprotocol.field_opts.BaseFieldOptions.make_opts,
+            type('a', (object,), {}),
             hello=1
         )
 
-
-    def test_integer_default_options(self):
-        self.assertDictEqual(
-            {'default': 0, 'optional': False},
-            field_opts.IntegerFieldOptions.make_opts()
+    def test_optional(self):
+        filed = IntegerField()
+        self.assertEqual(
+            filed.optional,
+            False
         )
 
-    def test_integer_custom_options(self):
-        self.assertDictEqual(
-            {'default': 10, 'optional': False},
-            field_opts.IntegerFieldOptions.make_opts(default=10)
+        filed = IntegerField(optional=True)
+        self.assertEqual(
+            filed.optional,
+            True
         )
-
-        self.assertDictEqual(
-            {'default': 10, 'optional': True},
-            field_opts.IntegerFieldOptions.make_opts(default=10, optional=True)
-        )
-
-
-
 
 
 if __name__ == '__main__':
@@ -43,8 +36,10 @@ if __name__ == '__main__':
     project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.append(project_path)
 
-    from flatprotocol import exception
-    from flatprotocol import field_opts
+
+    import flatprotocol.exception
+    import flatprotocol.field_opts
+    from flatprotocol import *
 
     unittest.main()
 
