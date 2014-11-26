@@ -54,11 +54,11 @@ def generate(cls):
     class_name = cls.__name__
     protocol_id = cls.Meta.protocol_id
 
+    obj = cls()
+
     fields = []
-    for p in dir(cls):
-        field = getattr(cls, p)
-        if isinstance(field, BaseField):
-            fields.append("        self.{0} = {1}".format(p, get_default_value(field)))
+    for f in obj.get_fields():
+        fields.append("        self.{0} = {1}".format(f.name, get_default_value(f)))
 
     fields = '\n'.join(fields)
 

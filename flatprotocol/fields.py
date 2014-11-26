@@ -3,7 +3,6 @@
 __author__ = 'Wang Chao'
 __date__ = '14-11-25'
 
-from field_opts import *
 
 __all__ = ['BaseField', 'IntegerField', 'FloatField', 'BinaryField', 'StringField',
            'Vector2Field', 'Vector3Field', 'ListField']
@@ -11,10 +10,9 @@ __all__ = ['BaseField', 'IntegerField', 'FloatField', 'BinaryField', 'StringFiel
 
 class BaseField(object):
     FIELD_ID = 0
-    OPTS = BaseFieldOptions
 
-    def __init__(self, **kwargs):
-        self.OPTS.make_opts(self, **kwargs)
+    def __init__(self, optional=False):
+        self.optional = optional
 
 
 class IntegerField(BaseField):

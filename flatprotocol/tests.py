@@ -5,28 +5,24 @@ __date__ = '14-11-25'
 
 import unittest
 
-class TestFieldOptions(unittest.TestCase):
+class TestProtocolFields(unittest.TestCase):
+    def setUp(self):
+        class P(Protocol):
+            id = IntegerField()
+            name = StringField()
+            des = StringField(optional=True)
+            bag = ListField()
 
-    def test_unsupported_options(self):
-        self.assertRaises(
-            flatprotocol.exception.UnsupportedFieldOptions,
-            flatprotocol.field_opts.BaseFieldOptions.make_opts,
-            type('a', (object,), {}),
-            hello=1
-        )
+        self.defined_protocol = P()
 
-    def test_optional(self):
-        filed = IntegerField()
-        self.assertEqual(
-            filed.optional,
-            False
-        )
+    def test_fields(self):
+        fields = self.defined_protocol.get_fields()
+        self.assertEqual(len(fields), 4)
+        for f in fields:
+            self.assertIn(f.name, ['id', 'name', 'des', 'bag'])
+            if f.name == 'des':
+                self.assertTrue(f.optional)
 
-        filed = IntegerField(optional=True)
-        self.assertEqual(
-            filed.optional,
-            True
-        )
 
 
 if __name__ == '__main__':
@@ -36,9 +32,6 @@ if __name__ == '__main__':
     project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.append(project_path)
 
-
-    import flatprotocol.exception
-    import flatprotocol.field_opts
     from flatprotocol import *
 
     unittest.main()

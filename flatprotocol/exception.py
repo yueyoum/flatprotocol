@@ -6,8 +6,4 @@ __date__ = '14-11-25'
 class FlatProtocolException(Exception):
     pass
 
-class UnsupportedFieldOptions(FlatProtocolException):
-    def __init__(self, arg):
-        self.arg = arg
-        FlatProtocolException.__init__(self, arg)
 
