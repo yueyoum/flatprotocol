@@ -9,10 +9,13 @@ __all__ = ['BaseField', 'IntegerField', 'FloatField', 'BinaryField', 'StringFiel
 
 
 class BaseField(object):
+    ORDER = 0
     FIELD_ID = 0
 
     def __init__(self, optional=False):
         self.optional = optional
+        self.order = BaseField.ORDER
+        BaseField.ORDER += 1
 
 
 class IntegerField(BaseField):

@@ -7,9 +7,7 @@ import os
 import sys
 import shutil
 from optparse import OptionParser
-import inspect
 
-from flatprotocol import Protocol
 from flatprotocol import templates
 
 
@@ -82,15 +80,10 @@ def generate_one(t, file_name, destination):
     module = __import__(file_name)
 
     result_file_name = os.path.join(destination, '{0}{1}'.format(file_name, t.FILE_NAME_EXTENSION))
-    result_file = open(result_file_name, 'a')
+    result_file = open(result_file_name, 'w')
 
-    for name in dir(module):
-        if name.startswith('__'):
-            continue
-        cls = getattr(module, name)
-        if inspect.isclass(cls) and issubclass(cls, Protocol) and cls is not Protocol:
-            result = t.generate(cls)
-            result_file.write(result)
+    result = t.generate(module.spec)
+    result_file.write(result)
 
     result_file.close()
 

@@ -5,3 +5,4 @@ __date__ = '14-11-25'
 
 from flatprotocol.fields import *
 from flatprotocol.protocols import *
+from flatprotocol.decorator import *
