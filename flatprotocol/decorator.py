@@ -8,15 +8,21 @@ __all__ = ['Specification',]
 
 
 class Specification(object):
-    def __init__(self, output_file_name=None):
-        self.output_file_name = output_file_name
+    def __init__(self, filename=None):
+        self._filename = filename
+        self._original_filename = None
         self.protocols = []
 
     def __call__(self, protocol_id):
-        print "==== call ", protocol_id
         def wrap(cls):
-            cls.protocol_id = protocol_id
+            cls._meta.set_protocol_id(protocol_id)
             self.protocols.append(cls)
             return cls
         return wrap
+
+    @property
+    def filename(self):
+        if self._filename:
+            return self._filename
+        return self._original_filename
 
